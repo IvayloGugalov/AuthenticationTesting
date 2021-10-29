@@ -65,11 +65,11 @@ namespace Identity.Home
 
             if (createResult.Succeeded)
             {
-                var siginInResult = await this.userManager.FindByNameAsync(username);
+                var signInResult = await this.userManager.FindByNameAsync(username);
 
-                if (siginInResult == null) return NotFound();
+                if (signInResult == null) return NotFound();
 
-                var result = await this.signInManager.PasswordSignInAsync(siginInResult, password, false, false);
+                var result = await this.signInManager.PasswordSignInAsync(signInResult, password, false, false);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -77,7 +77,6 @@ namespace Identity.Home
             return NotFound();
         }
 
-        [HttpPost]
         public async Task<IActionResult> LogOut()
         {
             await this.signInManager.SignOutAsync();

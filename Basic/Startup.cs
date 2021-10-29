@@ -1,3 +1,11 @@
+using System.Collections.Generic;
+using System.Security.Claims;
+using Basic.Authorizations;
+using Basic.Policies;
+using Basic.PolicyProvider;
+using Basic.Transformer;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +31,47 @@ namespace Basic
                 {
                     config.Cookie.Name = "IVO";
                     config.LoginPath = "/Home/Authenticate";
+
+                    //config.Cookie.Name = "Monster";
+                    //config.LoginPath = "/Operations/Authenticate";
                 });
 
-            services.AddMvc();
-            services.AddControllers();
+            services.AddAuthorization(config =>
+            {
+                //var defaultAuthBuilder = new AuthorizationPolicyBuilder();
+                //var defaultAuthPolicy = defaultAuthBuilder
+                //    .RequireAuthenticatedUser()
+                //    .RequireClaim(ClaimTypes.Country)
+                //    .Build();
 
+                //config.DefaultPolicy = defaultAuthPolicy;
 
+                // THESE ARE THE SAME
+
+                config.AddPolicy("Claim.UserCountry", builder =>
+                {
+                    builder.RequireCustomClaim(ClaimTypes.Country);
+                });
+
+                config.AddPolicy(CookieJarPolicy.MonsterClaim, builder =>
+                {
+                    builder.RequireCustomClaim(CookieJarPolicy.CookieMonsterValue);
+                });
+
+            });
+
+            services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, FirmHierarchyAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler, CustomRequirementClaimHandler>();
+            services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
+            services.AddScoped<IClaimsTransformation, ClaimsTransformation>(_
+                => new ClaimsTransformation(new List<Claim> { new Claim(ClaimTypes.Country, "Bulgaria") }));
+
+            services.AddControllersWithViews(config =>
+            {
+                // Add global authorization for every controller
+                //config.Filters.Add(new AuthorizeFilter());
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

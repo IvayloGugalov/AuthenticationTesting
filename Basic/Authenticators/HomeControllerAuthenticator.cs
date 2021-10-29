@@ -1,36 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Basic.Controllers
+namespace Basic.Authenticators
 {
-    public class Home : Controller
+    public static class HomeControllerAuthenticator
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [Authorize]
-        [Route("secret")]
-        public IActionResult Secret()
-        {
-            return View();
-        }
-
-        public IActionResult Authenticate()
+        public static ClaimsPrincipal GenerateClaims()
         {
             // Ways to recognize the user
             var ivoClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, "Ivo"),
                 new Claim(ClaimTypes.Email, "Ivo@mail.bg"),
-                new Claim("favourite food", "tiramisu")
+                new Claim("favourite food", "tiramisu"),
+                // Policy
+                new Claim(ClaimTypes.Country, "Bulgaria"),
+                // Role
+                new Claim(ClaimTypes.Role, "Admin")
             };
 
             var licenseClaims = new List<Claim>()
@@ -45,9 +31,7 @@ namespace Basic.Controllers
 
             var userPrincipal = new ClaimsPrincipal(new[] { ivoIdentity, licenseIdentity });
 
-            HttpContext.SignInAsync(userPrincipal);
-
-            return RedirectToAction(nameof(Index));
+            return userPrincipal;
         }
     }
 }
