@@ -50,8 +50,8 @@ namespace Server.Controllers
         }
 
         public async Task<IActionResult> Token(
-            string grant_type,
-            string code,
+            string grant_type, // flow of access_token request
+            string code, // confirmation of authentication process
             string redirect_uri,
             string client_id,
             string refresh_token)
