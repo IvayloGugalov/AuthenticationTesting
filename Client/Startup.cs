@@ -79,6 +79,7 @@ namespace Client
                     };
                 });
 
+            services.AddHttpClient();
 
             services.AddControllersWithViews();
 

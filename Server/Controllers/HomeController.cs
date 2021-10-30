@@ -11,11 +11,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Server.Controllers
 {
-    public class Home : Controller
+    public class HomeController : Controller
     {
         private readonly IAuthorizationService authorizationService;
 
-        public Home(IAuthorizationService authorizationService)
+        public HomeController(IAuthorizationService authorizationService)
         {
             this.authorizationService = authorizationService;
         }
