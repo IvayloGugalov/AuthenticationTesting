@@ -53,7 +53,8 @@ namespace Server.Controllers
             string grant_type,
             string code,
             string redirect_uri,
-            string client_id)
+            string client_id,
+            string refresh_token)
         {
             // mechanism to validate the "code"
 
@@ -70,12 +71,16 @@ namespace Server.Controllers
 
             var signingCredentials = new SigningCredentials(key, algorithm);
 
+            var expires = grant_type == "refresh_token"
+                ? DateTime.Now.AddMinutes(5)
+                : DateTime.Now.AddMilliseconds(1);
+
             var token = new JwtSecurityToken(
                 issuer: Constants.Issuer,
                 audience: Constants.Audience,
                 claims: ivoClaims,
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddDays(10),
+                expires: expires,
                 signingCredentials: signingCredentials);
 
             var access_token = new JwtSecurityTokenHandler().WriteToken(token);
@@ -84,7 +89,8 @@ namespace Server.Controllers
             {
                 access_token,
                 token_type = "Bearer",
-                raw_claim = "oauthTutorial"
+                raw_claim = "oauthTutorial",
+                refresh_token = "SomeRefreshTokenHere"
             };
 
             var jsonResponse = JsonSerializer.Serialize(responseObject);

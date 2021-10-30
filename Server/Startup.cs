@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +45,8 @@ namespace Server
                     {
                         ValidIssuer = Constants.Issuer,
                         ValidAudience = Constants.Audience,
-                        IssuerSigningKey = key
+                        IssuerSigningKey = key,
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 

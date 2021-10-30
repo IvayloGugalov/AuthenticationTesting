@@ -27,22 +27,21 @@ namespace Client
 
         public void ConfigureServices(IServiceCollection services)
         {
-            const string CookieAuthScheme = "ClientCookie";
-            const string ServerAuthScheme = "LocalServer";
+            
 
             services.AddAuthentication(config =>
                 {
                     // Check the cookie to see if we are authenticated
-                    config.DefaultAuthenticateScheme = CookieAuthScheme;
+                    config.DefaultAuthenticateScheme = Constants.CookieAuthScheme;
 
                     // When signing in, give the cookie
-                    config.DefaultSignInScheme = CookieAuthScheme;
+                    config.DefaultSignInScheme = Constants.CookieAuthScheme;
 
                     // Check to see if user is allowed to do smth through OAuth
-                    config.DefaultChallengeScheme = ServerAuthScheme;
+                    config.DefaultChallengeScheme = Constants.ServerAuthScheme;
                 })
-                .AddCookie(CookieAuthScheme)
-                .AddOAuth(ServerAuthScheme, config =>
+                .AddCookie(Constants.CookieAuthScheme)
+                .AddOAuth(Constants.ServerAuthScheme, config =>
                 {
                     config.ClientId = "client_id";
                     config.ClientSecret = "client_secret";
